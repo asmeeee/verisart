@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./production.db"
+}
+
+model Artist {
+  id            Int          @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  certificate   Certificate? @relation(fields: [certificateId], references: [id])
+  certificateId Int?         @unique
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Certificate {
+  id        Int      @id @default(autoincrement())
+  title     String
+  artist    Artist?
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

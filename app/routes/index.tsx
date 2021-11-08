@@ -1,6 +1,6 @@
-import { MetaFunction, LoaderFunction, ActionFunction } from "remix";
+import type { MetaFunction, LoaderFunction, ActionFunction } from "remix";
 
-import { useLoaderData, json, redirect, useFormAction } from "remix";
+import { useLoaderData, json, redirect, Form, useSubmit } from "remix";
 
 import { Link } from "react-router-dom";
 
@@ -32,8 +32,6 @@ export const meta: MetaFunction = ({ data }: { data: RouteData }) => {
 export const action: ActionFunction = async ({ request }) => {
   const body = new URLSearchParams(await request.text());
 
-  console.log("AAAAAAA", body.get("id"));
-
   await prisma.artist.delete({
     where: {
       certificateId: Number(body.get("id")),
@@ -52,13 +50,15 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { certificates } = useLoaderData<RouteData>();
 
-  const onDelete = async (id: number) => {
-    await prisma.certificate.delete({
-      where: {
-        id,
-      },
-    });
-  };
+  const submit = useSubmit();
+
+  function handleSubmit(event: any) {
+    event.preventDefault();
+
+    if (confirm("Are you sure?")) {
+      submit(event.currentTarget, { replace: true });
+    }
+  }
 
   return (
     <div>
@@ -80,13 +80,11 @@ export default function Index() {
             Edit
           </Link>
 
-          <button
-            className="btn btn-sm"
-            formAction={useFormAction("destroy")}
-            formMethod="DELETE"
-          >
-            Delete
-          </button>
+          <Form method="delete" onSubmit={handleSubmit}>
+            <input type="hidden" name="id" value={certificate.id} />
+
+            <button className="btn btn-sm">Delete</button>
+          </Form>
         </div>
       ))}
     </div>

@@ -8,6 +8,7 @@
 From your terminal:
 
 ```sh
+npm ci
 npm run dev
 ```
 
@@ -52,4 +53,3 @@ rm -rf app
 # copy your app over
 cp -R ../my-old-remix-app/app app
 ```
-# verisart

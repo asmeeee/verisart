@@ -1,6 +1,11 @@
-import type { LinksFunction } from "remix";
-
-import { Meta, Links, Scripts, LiveReload, useCatch } from "remix";
+import {
+  Meta,
+  LinksFunction,
+  Links,
+  Scripts,
+  LiveReload,
+  useCatch,
+} from "remix";
 
 import { Outlet } from "react-router-dom";
 
@@ -44,7 +49,7 @@ function Document({
 export default function App() {
   return (
     <Document>
-      <div className="container mx-auto">
+      <div className="container mx-auto p-4">
         <Outlet />
       </div>
     </Document>

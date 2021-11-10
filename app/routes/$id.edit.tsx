@@ -1,11 +1,20 @@
-import type { LoaderFunction, MetaFunction } from "remix";
-import { useLoaderData, json } from "remix";
-
-import { Link } from "react-router-dom";
+import {
+  useLoaderData,
+  RouteComponent,
+  json,
+  LoaderFunction,
+  ActionFunction,
+  MetaFunction,
+  useTransition,
+  redirect,
+  Link,
+} from "remix";
 
 import { prisma } from "~/prisma.server";
 
 import { CertificateWithArtist } from "~/types";
+
+import { CertificateForm } from "~/components";
 
 type RouteData = {
   certificate: CertificateWithArtist;
@@ -35,8 +44,36 @@ export const meta: MetaFunction = ({ data }: { data: RouteData }) => ({
     : "Not Found",
 });
 
-export default function Edit() {
+export const action: ActionFunction = async ({ request, params }) => {
+  const body = new URLSearchParams(await request.text());
+
+  await prisma.certificate.update({
+    where: {
+      id: Number(params.id),
+    },
+
+    data: {
+      title: body.get("title") as string,
+      year: Number(body.get("year")),
+
+      artist: {
+        update: {
+          firstName: body.get("artistFirstName") as string,
+          lastName: body.get("artistLastName") as string,
+        },
+      },
+    },
+  });
+
+  return redirect("/");
+};
+
+const EditCertificateRoute: RouteComponent = () => {
   const { certificate } = useLoaderData<RouteData>();
+
+  const transition = useTransition();
+
+  const pendingForm = transition.submission;
 
   return (
     <div>
@@ -46,9 +83,13 @@ export default function Edit() {
         </h1>
 
         <Link to="/" className="btn btn-accent btn-sm">
-          Go back!
+          Go back
         </Link>
       </div>
+
+      <CertificateForm values={certificate} isPending={!!pendingForm} />
     </div>
   );
-}
+};
+
+export default EditCertificateRoute;

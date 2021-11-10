@@ -67,7 +67,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const meta: MetaFunction = ({ data }: { data: RouteData }) => {
   return {
     title: "Verisart",
-    description: `We've got ${data.certificates.length} for ya`,
+    description: `We've got ${data?.certificates.length} for ya`,
   };
 };
 
@@ -118,7 +118,7 @@ const IndexRoute: RouteComponent = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 items-center justify-between mb-4 pb-4 border-b">
+      <div className="flex flex-col items-center justify-between mb-4 pb-4 border-b space-y-4 sm:flex-row sm:space-y-0">
         <Form onChange={handleSortChange}>
           <select
             name="sort"
